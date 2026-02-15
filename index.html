@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:title" content="北海道5-6日遊 6月廢人之旅" />
+    <meta property="og:description" content="9-10人團體行，三個方案票選中！" />
+    <meta property="og:image"
+        content="https://images.trvl-media.com/place/6104012/f8fa157e-15a4-4533-84ef-b21cb5b53110.jpg" />
+    <meta property="og:type" content="website" />
+
+    <title>北海道5-6日遊 6月廢人之旅</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        .hero-bg {
+            background-image: url('https://static.gltjp.com/glt/data/article/21000/20215/20221025_202234_e0e91aae_w1920.webp');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content a {
+            color: #2563eb;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+
+        .tab-content a:hover {
+            color: #1d4ed8;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 pb-20">
+
+    <div class="hero-bg h-56 flex items-center justify-center relative shadow-md">
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+        <div class="relative z-10 text-center text-white px-4">
+            <h1 class="text-3xl md:text-5xl font-bold mb-2">北海道5-6日遊 6月廢人之旅</h1>
+            <p class="text-lg">9-10人團體行 | 路線選起來！！</p>
+        </div>
+    </div>
+
+    <div class="sticky top-0 z-50 bg-white shadow-md">
+        <div class="max-w-4xl mx-auto flex justify-around">
+            <button onclick="switchTab('planA')" id="btn-planA"
+                class="flex-1 py-4 text-center font-bold border-b-4 border-green-500 text-green-700 bg-green-50 hover:bg-green-100 transition">
+                A案：札幌三地漫遊
+            </button>
+            <button onclick="switchTab('planB')" id="btn-planB"
+                class="flex-1 py-4 text-center font-bold border-b-4 border-transparent text-gray-500 hover:bg-gray-100 transition">
+                B案：溫泉文化慢活
+            </button>
+            <button onclick="switchTab('planC')" id="btn-planC"
+                class="flex-1 py-4 text-center font-bold border-b-4 border-transparent text-gray-500 hover:bg-gray-100 transition">
+                C案：札幌函館玩爆
+            </button>
+        </div>
+    </div>
+
+    <div id="plans-container" class="max-w-3xl mx-auto px-4 py-8">
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. 在這裡編輯你的旅遊資料
+        // ==========================================
+        const itineraryData = {
+            planA: {
+                id: 'planA',
+                planName: 'A',
+                title: '方案 A：札幌三地漫遊',
+                description: '札幌、小樽、旭川三地踏破，移動最少最廢，吃到爽、喝到爽！',
+                theme: {
+                    textTitle: 'text-green-800',
+                    borderLeft: 'border-green-500',
+                    badgeBg: 'bg-green-500',
+                    btnBg: 'bg-green-600',
+                    btnHover: 'hover:bg-green-500'
+                },
+                days: [
+                    {
+                        dayNum: 1,
+                        title: '抵達、狸小路＋成吉思汗烤肉',
+                        img: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/09/3b/ca/39/tanukikoji-shopping-street.jpg', // 留空就不會顯示圖片
+                        details: [
+                            '✈️ <strong>下午：</strong>抵達新千歲機場、Check in。',
+                            '🍖 <strong>晚餐：</strong><a href="https://hanblog.tw/daruma-44ten2f/">達摩—成吉思汗烤肉</a>。',
+                            '🏙️ <strong>晚間：</strong><a href="https://www.gltjp.com/zh-hant/article/item/20464/">狸小路商店街</a>採買、閒晃。',
+                            '<hr><br>🏨 <strong>住宿：</strong>札幌市區飯店。'
+                        ]
+                    },
+                    {
+                        dayNum: 2,
+                        title: '札幌一日遊',
+                        img: 'https://www.sapporo.travel/cms/wp-content/uploads/2020/10/tokeidaiMV_slide1.jpg',
+                        details: [
+                            '🌸 <strong>上午：</strong><a href="https://www.gltjp.com/zh-hant/article/item/20543/">札幌時計台</a>、大通公園、<a href="https://bobbyfun.tw/2024-01-12-2737/">北海道神宮</a>周遭景點漫遊。',
+                            '🍖 <strong>午餐：</strong>湯咖哩。',
+                            '🍈 <strong>下午：</strong><a href="https://munchkuo.blog/2024/03/17/%E3%80%90%E4%BF%9D%E5%AD%98%E5%8F%88%E8%B3%BA%E9%8C%A2%E7%9A%84%E5%8C%97%E6%B5%B7%E9%81%93%E6%9C%AD%E5%B9%8C%E5%95%A4%E9%85%92%E5%BB%A0%E3%80%91/">札幌啤酒博物館</a>爽喝Sapporo。',
+                            '🏙️ <strong>晚間：</strong><a href="https://mimigo.tw/moiwa/">藻岩山看夜景</a>。',
+                            '🍖 <strong>晚餐：</strong>札幌美食。',
+                            '<hr><br>🏨 <strong>住宿：</strong>札幌市區飯店。'
+                        ]
+                    },
+                    {
+                        dayNum: 3,
+                        title: '小樽一日遊',
+                        img: 'https://static.gltjp.com/glt/data/article/21000/20422/20230918_125155_df4c164d_w1920.webp',
+                        details: [
+                            '🚗 <strong>移動：</strong>札幌 -> 小樽 (約1小時)。',
+                            '🌸 <strong>上午：</strong><a href="https://japantravel.navitime.com/zh-tw/area/jp/spot/02301-1503775/">小樽市鰊御殿文化參訪</a>。',
+                            '🍖 <strong>午餐：</strong><a href="https://www.foodtigertw.com/blog/posts/3051208707">青塚食堂</a>爆吃海鮮丼。',
+                            '🍈 <strong>下午：</strong><a href="https://www.gltjp.com/zh-hant/article/item/20422/">小樽運河</a>、北一硝子館、音樂盒堂，移動回札幌。',
+                            '🍖 <strong>晚餐：</strong>札幌拉麵。',
+                            '<hr><br>🏨 <strong>住宿：</strong>札幌市區飯店。'
+                        ]
+                    },
+                    {
+                        dayNum: 4,
+                        title: '旭川一日遊',
+                        img: 'https://tw.wamazing.com/media/wp-content/uploads/sites/4/2019/09/asahikawa-gourmet_47558825_M.jpg.webp',
+                        details: [
+                            '🚗 <strong>移動：</strong>札幌 -> 旭川 (約1.5小時)。',
+                            '🌸 <strong>上午：</strong><a href="https://www.gltjp.com/zh-hant/article/item/20234/">旭山動物園或旭川美術館</a>。',
+                            '🍖 <strong>午餐：</strong><a href="https://natasha-traveler.tw/asahikawa-tenkin/">天金本店</a>爆吃海膽＋烤鰻魚。',
+                            '💧 <strong>下午：</strong><a href="https://www.gltjp.com/zh-hant/article/item/20234/">嵐山觀景臺或男山酒造資料館</a>、移動回札幌。',
+                            '🍖 <strong>晚餐：</strong>札幌美食。',
+                            '<hr><br>🏨 <strong>住宿：</strong>札幌市區飯店。'
+                        ]
+                    },
+                    {
+                        dayNum: 5,
+                        title: '札幌閒晃＋回程',
+                        img: 'https://www.sapporo.travel/cms/wp-content/uploads/2020/10/%EF%BD%8D%EF%BD%96-1.jpg',
+                        details: [
+                            '🚲 <strong>上午：</strong>中島公園閒晃。',
+                            '✈️ <strong>下午：</strong>抵達新千歲機場、回程。'
+                        ]
+                    }
+
+                ]
+            },
+            planB: {
+                id: 'planB',
+                planName: 'B',
+                title: '方案 B：溫泉文化慢活之旅',
+                description: '一泊二食頂級享受，悠哉閒晃加上愛努族文化參訪的深度之旅。',
+                theme: {
+                    textTitle: 'text-red-800',
+                    borderLeft: 'border-red-500',
+                    badgeBg: 'bg-red-500',
+                    btnBg: 'bg-red-600',
+                    btnHover: 'hover:bg-red-500'
+                },
+                days: [
+                    {
+                        dayNum: 1,
+                        title: '機場直奔溫泉鄉',
+                        img: 'https://static.gltjp.com/glt/data/article/21000/20944/20250227_134505_97b36141_w1920.webp',
+                        details: [
+                            '🚌 <strong>移動：</strong>機場 -> 登別溫泉 (約1小時)。',
+                            '👹 <strong>景點：</strong>登別地獄谷散策，空氣都是硫磺味。',
+                            '♨️ <strong>泡湯：</strong>穿浴衣吃飯店晚餐＋泡湯。',
+                            '<hr><br>🏨 <strong>住宿：</strong>登別溫泉飯店。'
+                        ]
+                    },
+                    {
+                        dayNum: 2,
+                        title: '愛奴文化體驗與狸小路shopping',
+                        img: 'https://static.gltjp.com/glt/data/article/21000/20816/20241022_105919_5517c0cd_w1920.webp',
+                        details: [
+                            '🐻 <strong>上午：</strong><a href="https://bearpark.jp/hant-bear/">登別熊牧場</a> 看熊害。',
+                            '🍖 <strong>午餐：</strong><a href="https://tw.wamazing.com/media/article/a-973/">登別溫泉商店街美食</a>。',
+                            '🏛️ <strong>下午：</strong><a href="https://natasha-traveler.tw/hokkaido-upopoy/">白老町 Upopoy (民族共生象徵空間)</a>＋移動回札幌（約1.5小時）。',
+                            '🍖 <strong>晚餐：</strong><a href="https://hanblog.tw/daruma-44ten2f/">達摩—成吉思汗烤肉</a>。',
+                            '🏙️ <strong>晚間：</strong><a href="https://www.gltjp.com/zh-hant/article/item/20464/">狸小路商店街</a>採買、閒晃。',
+                            '<hr><br>🏨 <strong>住宿：</strong>札幌市區飯店。'
+                        ]
+                    },
+                    {
+                        dayNum: 3,
+                        title: '札幌一日遊',
+                        img: 'https://www.sapporo.travel/cms/wp-content/uploads/2020/10/tokeidaiMV_slide1.jpg',
+                        details: [
+                            '🌸 <strong>上午：</strong><a href="https://www.gltjp.com/zh-hant/article/item/20543/">札幌時計台</a>、大通公園、<a href="https://bobbyfun.tw/2024-01-12-2737/">北海道神宮</a>周遭景點漫遊。',
+                            '🍖 <strong>午餐：</strong>湯咖哩。',
+                            '🍈 <strong>下午：</strong><a href="https://munchkuo.blog/2024/03/17/%E3%80%90%E4%BF%9D%E5%AD%98%E5%8F%88%E8%B3%BA%E9%8C%A2%E7%9A%84%E5%8C%97%E6%B5%B7%E9%81%93%E6%9C%AD%E5%B9%8C%E5%95%A4%E9%85%92%E5%BB%A0%E3%80%91/">札幌啤酒博物館</a>爽喝Sapporo。',
+                            '🏙️ <strong>晚間：</strong><a href="https://mimigo.tw/moiwa/">藻岩山看夜景</a>。',
+                            '🍖 <strong>晚餐：</strong>札幌美食。',
+                            '<hr><br>🏨 <strong>住宿：</strong>札幌市區飯店。'
+                        ]
+                    },
+                    {
+                        dayNum: 4,
+                        title: '小樽一日遊',
+                        img: 'https://static.gltjp.com/glt/data/article/21000/20422/20230918_125155_df4c164d_w1920.webp',
+                        details: [
+                            '🚗 <strong>移動：</strong>札幌 -> 小樽 (約1小時)。',
+                            '🌸 <strong>上午：</strong><a href="https://japantravel.navitime.com/zh-tw/area/jp/spot/02301-1503775/">小樽市鰊御殿文化參訪</a>。',
+                            '🍖 <strong>午餐：</strong><a href="https://www.foodtigertw.com/blog/posts/3051208707">青塚食堂</a>爆吃海鮮丼。',
+                            '🍈 <strong>下午：</strong><a href="https://www.gltjp.com/zh-hant/article/item/20422/">小樽運河</a>吃甜點，逛北一硝子館、音樂盒堂。',
+                            '🍖 <strong>晚餐：</strong>札幌拉麵、湯咖哩。',
+                            '<hr><br>🏨 <strong>住宿：</strong> 札幌市區飯店。'
+                        ]
+                    },
+                    {
+                        dayNum: 5,
+                        title: '札幌閒晃＋回程',
+                        img: 'https://www.sapporo.travel/cms/wp-content/uploads/2020/10/%EF%BD%8D%EF%BD%96-1.jpg',
+                        details: [
+                            '🚲 <strong>上午：</strong>中島公園閒晃。',
+                            '✈️ <strong>下午：</strong>抵達新千歲機場、回程。'
+                        ]
+                    }
+                ]
+            },
+            planC: {
+                id: 'planC',
+                planName: 'C',
+                title: '方案 C：札幌函館玩爆',
+                description: '札幌進、函館出，需時六天，移動最遠但最充實，去一次抵三次！',
+                theme: {
+                    textTitle: 'text-blue-800',
+                    borderLeft: 'border-blue-500',
+                    badgeBg: 'bg-blue-500',
+                    btnBg: 'bg-blue-600',
+                    btnHover: 'hover:bg-blue-500'
+                },
+                days: [
+                    {
+                        dayNum: 1,
+                        title: '抵達、狸小路＋成吉思汗烤肉',
+                        img: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/09/3b/ca/39/tanukikoji-shopping-street.jpg', // 留空就不會顯示圖片
+                        details: [
+                            '✈️ <strong>下午：</strong>抵達新千歲機場。',
+                            '🍖 <strong>晚餐：</strong>必吃「<a href="https://hanblog.tw/daruma-44ten2f/">達摩成吉思汗烤肉</a>」。',
+                            '🍺 <strong>宵夜：</strong>狸小路商店街採買。',
+                            '<hr><br>🏨 <strong>住宿：</strong>札幌市區飯店。',
+                        ]
+                    },
+                    {
+                        dayNum: 2,
+                        title: '札幌一日遊',
+                        img: 'https://www.sapporo.travel/cms/wp-content/uploads/2020/10/tokeidaiMV_slide1.jpg',
+                        details: [
+                            '🌸 <strong>上午：</strong><a href="https://www.gltjp.com/zh-hant/article/item/20543/">札幌時計台</a>、大通公園、<a href="https://bobbyfun.tw/2024-01-12-2737/">北海道神宮</a>周遭景點漫遊。',
+                            '🍖 <strong>午餐：</strong>湯咖哩。',
+                            '🍈 <strong>下午：</strong><a href="https://munchkuo.blog/2024/03/17/%E3%80%90%E4%BF%9D%E5%AD%98%E5%8F%88%E8%B3%BA%E9%8C%A2%E7%9A%84%E5%8C%97%E6%B5%B7%E9%81%93%E6%9C%AD%E5%B9%8C%E5%95%A4%E9%85%92%E5%BB%A0%E3%80%91/">札幌啤酒博物館</a>爽喝Sapporo。',
+                            '🏙️ <strong>晚間：</strong><a href="https://mimigo.tw/moiwa/">藻岩山看夜景</a>。',
+                            '🍖 <strong>晚餐：</strong>札幌美食。',
+                            '<hr><br>🏨 <strong>住宿：</strong>札幌市區飯店。'
+                        ]
+                    },
+                    {
+                        dayNum: 3,
+                        title: '小樽一日遊',
+                        img: 'https://static.gltjp.com/glt/data/article/21000/20422/20230918_125155_df4c164d_w1920.webp',
+                        details: [
+                            '🚗 <strong>移動：</strong>札幌 -> 小樽 (約1小時)，寄放行李。',
+                            '🌸 <strong>上午：</strong><a href="https://japantravel.navitime.com/zh-tw/area/jp/spot/02301-1503775/">小樽市鰊御殿文化參訪</a>。',
+                            '🍖 <strong>午餐：</strong><a href="https://www.foodtigertw.com/blog/posts/3051208707">青塚食堂</a>爆吃海鮮丼。',
+                            '🍈 <strong>下午：</strong><a href="https://www.gltjp.com/zh-hant/article/item/20422/">小樽運河</a>吃甜點，逛北一硝子館、音樂盒堂。',
+                            '🍖 <strong>晚餐：</strong>吃壽司、居酒屋。',
+                            '<hr><br>🏨 <strong>住宿：</strong>札幌市區飯店。'
+                        ]
+                    },
+                    {
+                        dayNum: 4,
+                        title: '移動＋函館市區散策',
+                        img: 'https://s3-ap-northeast-1.amazonaws.com/thegate/2021/02/12/13/05/24/Kanemori-Red-Brick-Warehouse.jpg',
+                        details: [
+                            '🚗 <strong>移動：</strong>札幌 -> 函館 (約3.5小時)，寄放行李。',
+                            '🥢 <strong>午餐：</strong>函館美食。',
+                            '🚗 <strong>下午：</strong>移動至函館check in，<a href="https://bobbyfun.tw/2024-01-13-2741/">金森紅磚倉庫散步</a>',
+                            '🍖 <strong>晚餐：</strong><a href="https://gototravel.tw/daimon-yokocho-alley/">函館大門橫丁喝爆</a>',
+                            '<hr><br>🏨 <strong>住宿：</strong>函館飯店。'
+                        ]
+                    },
+                    {
+                        dayNum: 5,
+                        title: '函館一日遊',
+                        img: 'https://cdn.zekkei-japan.jp/images/articles/3bfc0e4f4166cd232cfbc87fb21f2e2e.jpg',
+                        details: [
+
+                            '🥢 <strong>上午：</strong><a href="https://hokkaido.letsgojp.com/archives/15816/">函館朝市</a>爆吃帝王蟹',
+                            '🚗 <strong>下午：</strong>五稜郭散步＋函館市區散策',
+                            '🍖 <strong>晚餐：</strong>函館美食',
+                            '🏙️ <strong>晚間：</strong><a href="https://www.gltjp.com/zh-hant/article/item/20398/">函館百萬夜景</a>。',
+                            '<hr><br>🏨 <strong>住宿：</strong>函館飯店。'
+                        ]
+                    },
+                    {
+                        dayNum: 6,
+                        title: '函館閒晃＋回程',
+                        img: 'https://ctgirlblog.com/wp-content/uploads/2025/04/LINE_ALBUM_870%E6%99%AE%E5%8B%92_250408_16.jpg',
+                        details: [
+                            '🚲 <strong>上午：</strong>函館市區閒晃',
+                            '✈️ <strong>下午：</strong>抵達函館機場、回程。'
+                        ]
+                    }
+
+                ]
+            }
+        };
+
+        // ==========================================
+        // 2. 負責生成 HTML 的函數
+        // ==========================================
+        function renderItinerary() {
+            const container = document.getElementById('plans-container');
+            let htmlContent = '';
+
+            for (const key in itineraryData) {
+                const plan = itineraryData[key];
+                const isActive = key === 'planA' ? 'active' : ''; // 預設顯示 A 案
+
+                // 組合方案的頭部
+                let planHtml = `
+                <div id="${plan.id}" class="tab-content ${isActive}">
+                    <div class="mb-6 text-center">
+                        <h2 class="text-2xl font-bold ${plan.theme.textTitle}">${plan.title}</h2>
+                        <p class="text-gray-600">${plan.description}</p>
+                    </div>`;
+
+                // 跑迴圈組合每一天的卡片
+                plan.days.forEach(day => {
+                    const imgHtml = day.img ? `<img src="${day.img}" class="w-full h-40 object-cover">` : '';
+                    const detailsHtml = day.details.map(item => `<p>${item}</p>`).join('');
+
+                    planHtml += `
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6 border-l-8 ${plan.theme.borderLeft}">
+                        ${imgHtml}
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 flex items-center">
+                                <span class="${plan.theme.badgeBg} text-white text-xs px-2 py-1 rounded mr-2">Day ${day.dayNum}</span> 
+                                ${day.title}
+                            </h3>
+                            <div class="text-gray-700 space-y-2 text-sm">
+                                ${detailsHtml}
+                            </div>
+                        </div>
+                    </div>`;
+                });
+
+                // 組合收尾
+                planHtml += `
+                </div>`;
+
+                htmlContent += planHtml;
+            }
+
+            container.innerHTML = htmlContent;
+        }
+
+        // ==========================================
+        // 3. 負責切換分頁的函數
+        // ==========================================
+        function switchTab(planId) {
+            // 隱藏所有內容
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+
+            // 移除所有按鈕的活躍樣式
+            ['btn-planA', 'btn-planB', 'btn-planC'].forEach(id => {
+                const btn = document.getElementById(id);
+                btn.className = "flex-1 py-4 text-center font-bold border-b-4 border-transparent text-gray-500 hover:bg-gray-100 transition";
+            });
+
+            // 顯示目標內容
+            document.getElementById(planId).classList.add('active');
+
+            // 設定目標按鈕的專屬活躍樣式
+            const activeBtn = document.getElementById('btn-' + planId);
+            let colorClass = "";
+            if (planId === 'planA') colorClass = "text-green-700 border-green-500 bg-green-50";
+            if (planId === 'planB') colorClass = "text-red-700 border-red-500 bg-red-50";
+            if (planId === 'planC') colorClass = "text-blue-700 border-blue-500 bg-blue-50";
+
+            activeBtn.className = `flex-1 py-4 text-center font-bold border-b-4 ${colorClass} transition`;
+        }
+
+        // ==========================================
+        // 4. 網頁載入時自動執行渲染
+        // ==========================================
+        renderItinerary();
+    </script>
+</body>
+
+</html>
