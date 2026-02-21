@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/miluya2022/hokkaido/main/Geass_symbol.png">
+
+    <meta name="apple-mobile-web-app-title" content="日本記帳">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title>啟動中...</title>
+
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #timer {
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="loader"></div>
+    <div id="timer">正在準備應用程式，<span id="seconds">10</span> 秒後跳轉...</div>
+
+    <script>
+        let timeLeft = 10;
+        const targetUrl = "https://script.google.com/u/0/home/projects/1V3GZfDW3nRlmLqiJg0wRbM_1R_ui6LwaGXUI_mB-9aDvzA5ptbNaLkhR/edit";
+        const secondsDisplay = document.getElementById('seconds');
+
+        // 倒數計時邏輯
+        const countdown = setInterval(() => {
+            timeLeft--;
+            secondsDisplay.textContent = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                window.location.href = targetUrl;
+            }
+        }, 1000);
+
+        // 如果使用者等不及，可以點擊立即跳轉
+        document.body.onclick = () => {
+            window.location.href = targetUrl;
+        };
+    </script>
+</body>
+
+</html>
