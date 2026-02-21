@@ -39,3 +39,60 @@ function addComment(nickname, content) {
   sheet.appendRow([new Date(), nickname, content]);
   return true;
 }
+
+// ===== 投票功能 (Voting) =====
+var VOTE_SHEET_NAME = 'votes';
+
+// 投票
+function submitVote(nickname, option) {
+  if (!nickname || !option) return { success: false, message: '請填寫暱稱並選擇方案！' };
+  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(VOTE_SHEET_NAME);
+  
+  // 如果沒有這個 sheet，自動建立
+  if (!sheet) {
+    sheet = ss.insertSheet(VOTE_SHEET_NAME);
+    sheet.appendRow(['時間', '暱稱', '選項']); // header
+  }
+  
+  // 檢查是否投過票 (簡單檢查：同暱稱不能重複投)
+  // 若要更嚴謹可用 cookie 或 IP，但 GAS 抓 IP 不易，這裡先用暱稱與簡單 cookie (前端控制)
+  var data = sheet.getDataRange().getValues(); // [[Time, Nick, Opt], ...]
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][1]).trim() === String(nickname).trim()) {
+      return { success: false, message: '這個暱稱已經投過票囉！' };
+    }
+  }
+
+  sheet.appendRow([new Date(), nickname, option]);
+  return { success: true, message: '投票成功！' };
+}
+
+// 取得投票結果
+function getVoteResults() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(VOTE_SHEET_NAME);
+  
+  var results = { A: 0, B: 0, C: 0 };
+  
+  if (!sheet) return results;
+  
+  var lastRow = sheet.getLastRow();
+  if (lastRow <= 1) return results; // 只有標題或空的
+  
+  var data = sheet.getRange(2, 3, lastRow - 1, 1).getValues(); // 取第3欄 (選項)
+  
+  // 計算票數
+  data.forEach(function(row) {
+    var opt = String(row[0]).trim().toUpperCase(); // 轉大寫避免大小寫問題
+    // 如果選項是 A, B, C 其中之一 (或包含 "方案A" 之類的關鍵字，這裡先精確比對 A, B, C)
+    if (results.hasOwnProperty(opt)) {
+      results[opt]++;
+    } else if (opt.includes('A')) { results.A++; }
+    else if (opt.includes('B')) { results.B++; }
+    else if (opt.includes('C')) { results.C++; }
+  });
+  
+  return results;
+}

@@ -69,6 +69,75 @@
         </button>
     </div>
 
+    <!-- ===== 投票區 ===== -->
+    <div class="mt-6 bg-white p-4 rounded-lg shadow-md border border-gray-200">
+        <h3 class="text-sm font-bold text-gray-600 mb-3">🗳️ 行程方案投票</h3>
+
+        <div class="mb-4">
+            <input type="text" id="vote-nickname" placeholder="你的暱稱 (記名投票)"
+                class="w-full p-2 border rounded text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-400 transition mb-3">
+
+            <div class="space-y-2">
+                <label
+                    class="flex items-center space-x-2 p-2 border rounded hover:bg-green-50 cursor-pointer transition">
+                    <input type="radio" name="voteOption" value="A" class="form-radio text-green-600">
+                    <span class="text-sm font-bold text-green-800">方案 A：札幌三地漫遊</span>
+                </label>
+                <label class="flex items-center space-x-2 p-2 border rounded hover:bg-red-50 cursor-pointer transition">
+                    <input type="radio" name="voteOption" value="B" class="form-radio text-red-600">
+                    <span class="text-sm font-bold text-red-800">方案 B：溫泉文化慢活</span>
+                </label>
+                <label
+                    class="flex items-center space-x-2 p-2 border rounded hover:bg-blue-50 cursor-pointer transition">
+                    <input type="radio" name="voteOption" value="C" class="form-radio text-blue-600">
+                    <span class="text-sm font-bold text-blue-800">方案 C：札幌函館玩爆</span>
+                </label>
+            </div>
+        </div>
+
+        <button onclick="submitVote()" id="voteSubmitBtn"
+            class="w-full bg-green-600 text-white py-2 rounded font-bold text-sm hover:bg-green-700 transition duration-200 shadow-sm">
+            送出投票 🗳️
+        </button>
+
+        <!-- 投票結果顯示 -->
+        <div class="mt-6 pt-4 border-t border-gray-100">
+            <h4 class="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">目前戰況</h4>
+
+            <div class="space-y-3">
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="font-bold text-gray-700">方案 A</span>
+                        <span id="vote-count-A" class="font-mono text-gray-500">0 票</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="vote-bar-A" class="bg-green-500 h-2.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="font-bold text-gray-700">方案 B</span>
+                        <span id="vote-count-B" class="font-mono text-gray-500">0 票</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="vote-bar-B" class="bg-red-500 h-2.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="font-bold text-gray-700">方案 C</span>
+                        <span id="vote-count-C" class="font-mono text-gray-500">0 票</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="vote-bar-C" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // XSS 防護
         function escapeHtml(text) {
@@ -167,11 +236,152 @@
                 .addComment(nick, cont);
         }
 
-        // 初始載入
-        loadComments();
 
         // 每 30 秒自動刷新
-        setInterval(loadComments, 30000);
+        setInterval(function () {
+            loadComments();
+            loadVoteResults();
+        }, 30000);
+
+        // 投票相關邏輯
+        function loadVoteResults() {
+            google.script.run
+                .withSuccessHandler(function (results) {
+                    // results = {A: 10, B: 5, C: 2}
+                    var total = results.A + results.B + results.C;
+
+                    ['A', 'B', 'C'].forEach(function (opt) {
+                        var count = results[opt];
+                        var percent = total === 0 ? 0 : Math.round((count / total) * 100);
+
+                        document.getElementById('vote-count-' + opt).innerText = count + ' 票';
+                        document.getElementById('vote-bar-' + opt).style.width = percent + '%';
+                    });
+                })
+                .withFailureHandler(function (error) {
+                    console.error('loadVoteResults error:', error);
+                })
+                .getVoteResults();
+        }
+
+        function submitVote() {
+            var nickInput = document.getElementById('vote-nickname');
+            var options = document.getElementsByName('voteOption');
+            var btn = document.getElementById('voteSubmitBtn');
+            var selectedOption = null;
+
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].checked) {
+                    selectedOption = options[i].value;
+                    break;
+                }
+            }
+
+            var nick = nickInput.value.trim();
+
+            if (!nick) {
+                alert('請輸入暱稱！');
+                return;
+            }
+            if (!selectedOption) {
+                alert('請選擇一個方案！');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '投票中... ⏳';
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            google.script.run
+                .withSuccessHandler(function (response) {
+                    if (response.success) {
+                        alert('🎉 ' + response.message);
+                        loadVoteResults();
+                        // 簡單記錄已投票 (cookie 或 localStorage 在 iframe 中可能有雷，這裡先不擋，後端有簡單擋暱稱)
+                    } else {
+                        alert('⚠️ ' + response.message);
+                    }
+
+                    btn.disabled = false;
+                    btn.innerHTML = '送出投票 🗳️';
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                })
+                .withFailureHandler(function (err) {
+                    alert('投票失敗：' + err);
+                    btn.disabled = false;
+                    btn.innerHTML = '送出投票 🗳️';
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                })
+                .submitVote(nick, selectedOption);
+        }
+
+
+        // 通知父視窗調整高度
+        function notifyParentResize() {
+            var height = document.body.scrollHeight;
+            window.parent.postMessage({
+                frameHeight: height
+            }, '*');
+        }
+
+        // 初始載入
+        loadComments();
+        loadVoteResults();
+
+        // 監聽圖片載入完成後也通知一次高度（如果有圖片的話）
+        window.addEventListener('load', notifyParentResize);
+        // 每秒檢查一次高度是否有變化 (簡單暴力解)
+        setInterval(notifyParentResize, 1000);
+
+        // 改寫 loadComments 的 success handler，多加一步 notifyParentResize
+        var originalLoadComments = loadComments;
+        loadComments = function () {
+            google.script.run
+                .withSuccessHandler(function (comments) {
+                    // ... (原有邏輯) ...
+                    var list = document.getElementById('commentList');
+                    if (!comments || comments.length === 0) {
+                        list.innerHTML = '<p class="text-center text-gray-400 text-sm py-6">目前還沒有人留言，搶頭香！🎉</p>';
+                    } else {
+                        list.innerHTML = comments.map(function (c) {
+                            var dateStr = '';
+                            try {
+                                var d = new Date(c[0]);
+                                var mm = d.getMonth() + 1;
+                                var dd = d.getDate();
+                                var hh = String(d.getHours()).padStart(2, '0');
+                                var mi = String(d.getMinutes()).padStart(2, '0');
+                                dateStr = mm + '/' + dd + ' ' + hh + ':' + mi;
+                            } catch (e) {
+                                dateStr = String(c[0]);
+                            }
+                            var safeName = escapeHtml(c[1]);
+                            var safeContent = escapeHtml(c[2]).replace(/\n/g, '<br>');
+                            return '<div class="bg-white p-3 rounded-lg border border-gray-100 shadow-sm comment-card hover:shadow-md transition">' +
+                                '<div class="flex justify-between items-center mb-1">' +
+                                '<span class="font-bold text-blue-800 text-sm flex items-center">' +
+                                '<span class="w-2 h-2 bg-blue-500 rounded-full mr-2 inline-block"></span>' +
+                                safeName +
+                                '</span>' +
+                                '<span class="text-gray-400 text-xs font-mono">' + dateStr + '</span>' +
+                                '</div>' +
+                                '<p class="text-gray-700 text-sm leading-relaxed break-words pl-4 border-l-2 border-gray-100">' +
+                                safeContent +
+                                '</p>' +
+                                '</div>';
+                        }).join('');
+                    }
+                    // 重新計算高度
+                    setTimeout(notifyParentResize, 100);
+                })
+                .withFailureHandler(function (error) {
+                    document.getElementById('commentList').innerHTML =
+                        '<p class="text-red-500 text-center text-sm py-4">載入失敗，請重新整理頁面。</p>';
+                    console.error('loadComments error:', error);
+                    setTimeout(notifyParentResize, 100);
+                })
+                .getComments();
+        }
     </script>
 </body>
 

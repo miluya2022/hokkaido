@@ -95,7 +95,7 @@
         <!-- ⬇️ 請將下方 src 換成你部署的 GAS Web App 網址 ⬇️ -->
         <iframe id="comment-iframe"
             src="https://script.google.com/macros/s/AKfycbyd-Ua347SjltgCMZ9uFZikjmnFZQ8PuSAGfcHoNmNz5KVqKr5Ln_HKS76tLeh96XWb/exec"
-            style="width:100%; min-height:600px; border:none; border-radius:12px; overflow:hidden;"
+            style="width:100%; min-height:1200px; border:none; border-radius:12px; overflow:hidden;"
             scrolling="auto"></iframe>
     </div>
 
@@ -423,6 +423,19 @@
         // 4. 網頁載入時自動執行渲染
         // ==========================================
         renderItinerary();
+        // ==========================================
+        // 5. 監聽 iframe 傳來的高度資訊
+        // ==========================================
+        window.addEventListener('message', function (e) {
+            // 這裡可以加上來源檢查，確保安全性 e.origin
+            // 但因為 GAS 的 origin 每次執行可能會變，這裡先暫時寬鬆
+            if (e.data && e.data.frameHeight) {
+                const iframe = document.getElementById('comment-iframe');
+                if (iframe) {
+                    iframe.style.height = e.data.frameHeight + 'px';
+                }
+            }
+        });
     </script>
 </body>
 
